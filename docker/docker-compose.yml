@@ -1,0 +1,71 @@
+services:
+  nginx:
+    container_name: ${NGINX_CONTAINER_NAME:-workout-nginx}
+    build:
+      dockerfile: nginx/Dockerfile
+      context: .
+    image: nginx:alpine
+    restart: always
+    ports:
+      - ${NGINX_CONTAINER_PORT:-8000}:80
+    volumes:
+      - ../app:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - workout
+    depends_on:
+      - php
+  php:
+    container_name: ${PHP_CONTAINER_NAME:-workout-php}
+    user: ${PHP_USER}:${PHP_USER}
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+      args:
+        - DOCKER_USER=${PHP_USER:-user}
+        - DOCKER_USER_UID=${PHP_UID:-1000}
+    restart: always
+    environment:
+      - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT:-1024M}
+    ports:
+      - "9000:9000"
+    volumes:
+      - ../app:/var/www
+    networks:
+      - workout
+    depends_on:
+      - mysql
+  mysql:
+    container_name: ${MYSQL_CONTAINER_NAME:-workout-mysql}
+    image: "mysql/mysql-server:8.0"
+    restart: always
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USERNAME}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - "mysql:/var/lib/mysql"
+    networks:
+      - workout
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - "-p ${MYSQL_PASSWORD}"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  workout:
+    name: workout
+    external: true
+
+volumes:
+  mysql:

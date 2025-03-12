@@ -1,0 +1,1 @@
+docker compose -p workout-tracker down -t 0
