@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Enum\Role\Role;
+use App\Enum\Role;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 #[ORM\Table(name: "users")]
 class User
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -33,46 +32,15 @@ class User
     #[ORM\Column(enumType: Role::class)]
     private Role $role;
 
-    #[ORM\OneToMany(
-        targetEntity: Routine::class,
-        mappedBy: "user",
-        orphanRemoval: true
-    )]
-    private Collection $routines;
+    /**
+     * @var Collection<int, Thread>
+     */
+    #[ORM\OneToMany(targetEntity: Thread::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $threads;
 
-    public static function create(
-        string $email,
-        string $firstName,
-        string $lastName,
-        string $password,
-        Role $role
-    ) {
-        return new self(
-            id: null,
-            email: $email,
-            firstName: $firstName,
-            lastName: $lastName,
-            password: $password,
-            role: $role
-        );
-    }
-
-    public function __construct(
-        ?int $id = null,
-        string $email,
-        string $firstName,
-        string $lastName,
-        string $password,
-        Role $role
-    ) {
-        $this->id = $id;
-        $this->email = $email;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->password = $password;
-        $this->role = $role;
-
-        $this->routines = new ArrayCollection();
+    public function __construct()
+    {
+        $this->threads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -85,9 +53,11 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
     }
 
     public function getFirstName(): string
@@ -95,9 +65,11 @@ class User
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): void
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
+
+        return $this;
     }
 
     public function getLastName(): string
@@ -105,9 +77,11 @@ class User
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): void
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
+
+        return $this;
     }
 
     public function getPassword(): string
@@ -115,9 +89,11 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
     }
 
     public function getRole(): Role
@@ -125,26 +101,39 @@ class User
         return $this->role;
     }
 
-    public function setRole(Role $role): void
+    public function setRole(Role $role): static
     {
         $this->role = $role;
-    }
 
-    public function addRoutine(Routine $routine): void
-    {
-        $this->routines->add($routine);
-    }
-
-    public function removeRoutine(Routine $routine): void
-    {
-        $this->routines->removeElement($routine);
+        return $this;
     }
 
     /**
-     * @return Collection<int,Routine>
+     * @return Collection<int, Thread>
      */
-    public function getRoutines(): Collection
+    public function getThreads(): Collection
     {
-        return $this->routines;
+        return $this->threads;
+    }
+
+    public function addThread(Thread $thread): static
+    {
+        if (!$this->threads->contains($thread)) {
+            $this->threads->add($thread);
+            $thread->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeThread(Thread $thread): static
+    {
+        if ($this->threads->removeElement($thread)) {
+            if ($thread->getUser() === $this) {
+                $thread->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
