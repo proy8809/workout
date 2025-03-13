@@ -20,16 +20,16 @@ class Thread
 
     #[ORM\ManyToOne(inversedBy: 'threads')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\Column(length: 64)]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $content = null;
+    private string $content;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?DateTimeImmutable $createdAt = null;
+    private DateTimeImmutable $createdAt;
 
     /**
      * @var Collection<int, ThreadTag>
@@ -37,9 +37,16 @@ class Thread
     #[ORM\OneToMany(targetEntity: ThreadTag::class, mappedBy: 'thread', orphanRemoval: true)]
     private Collection $threadTags;
 
+    /**
+     * @var Collection<int, Post>
+     */
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'thread_id', orphanRemoval: true)]
+    private Collection $posts;
+
     public function __construct()
     {
         $this->threadTags = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,14 +59,14 @@ class Thread
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -71,7 +78,7 @@ class Thread
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -83,7 +90,7 @@ class Thread
         return $this;
     }
 
-    public function getCreatedAt(): ?string
+    public function getCreatedAt(): string
     {
         return $this->content;
     }
@@ -116,11 +123,35 @@ class Thread
 
     public function removeThreadTag(ThreadTag $threadTag): static
     {
-        if ($this->threadTags->removeElement($threadTag)) {
-            // set the owning side to null (unless already changed)
-            if ($threadTag->getThread() === $this) {
-                $threadTag->setThread(null);
-            }
+        if ($this->threadTags->contains($threadTag)) {
+            $this->threadTags->removeElement($threadTag);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Post>
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
+            $post->setThread($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): static
+    {
+        if ($this->posts->contains($post)) {
+            $this->posts->removeElement($post);
         }
 
         return $this;

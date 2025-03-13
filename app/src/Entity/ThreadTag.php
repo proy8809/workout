@@ -17,45 +17,45 @@ class ThreadTag
 
     #[ORM\ManyToOne(inversedBy: 'threadTags')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Thread $thread = null;
+    private Thread $thread;
 
     #[ORM\ManyToOne(inversedBy: 'threadTags')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Tag $tag = null;
+    private Tag $tag;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $addedAt = null;
+    private \DateTimeImmutable $addedAt;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getThread(): ?Thread
+    public function getThread(): Thread
     {
         return $this->thread;
     }
 
-    public function setThread(?Thread $thread): static
+    public function setThread(Thread $thread): static
     {
         $this->thread = $thread;
 
         return $this;
     }
 
-    public function getTag(): ?Tag
+    public function getTag(): Tag
     {
         return $this->tag;
     }
 
-    public function setTag(?Tag $tag): static
+    public function setTag(Tag $tag): static
     {
         $this->tag = $tag;
 
         return $this;
     }
 
-    public function getAddedAt(): ?\DateTimeImmutable
+    public function getAddedAt(): \DateTimeImmutable
     {
         return $this->addedAt;
     }

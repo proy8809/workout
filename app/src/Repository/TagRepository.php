@@ -4,51 +4,38 @@ namespace App\Repository;
 
 use App\Entity\Tag;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Service\Tag\TagRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Tag>
  */
-class TagRepository extends ServiceEntityRepository
+class TagRepository extends ServiceEntityRepository implements TagRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+    ) {
         parent::__construct($registry, Tag::class);
     }
 
-    /**
-     * @return Tag[]
-     */
-    public function findAllForList(): array
+    public function findById(int $id): Tag
     {
-        return $this->createQueryBuilder("t")
-            ->select("t.id", "t.title")
-            ->getQuery()
-            ->getArrayResult();
+        return $this->find($id);
     }
 
-    //    /**
-    //     * @return Tag[] Returns an array of Tag objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function persist(Tag $tag): Tag
+    {
+        $em = $this->getEntityManager();
+        $em->persist($tag);
+        $em->flush();
 
-    //    public function findOneBySomeField($value): ?Tag
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $tag;
+    }
+
+    public function remove(Tag $tag): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($tag);
+        $em->flush();
+    }
 }

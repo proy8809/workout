@@ -17,7 +17,7 @@ class Tag
     private ?int $id = null;
 
     #[ORM\Column(length: 64)]
-    private ?string $title = null;
+    private string $title;
 
     /**
      * @var Collection<int, ThreadTag>
@@ -35,7 +35,7 @@ class Tag
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -67,11 +67,8 @@ class Tag
 
     public function removeThreadTag(ThreadTag $threadTag): static
     {
-        if ($this->threadTags->removeElement($threadTag)) {
-            // set the owning side to null (unless already changed)
-            if ($threadTag->getTag() === $this) {
-                $threadTag->setTag(null);
-            }
+        if ($this->threadTags->contains($threadTag)) {
+            $this->threadTags->removeElement($threadTag);
         }
 
         return $this;

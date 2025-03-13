@@ -2,22 +2,22 @@
 
 namespace App\Entity;
 
-use App\Enum\Role;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "users")]
-class User
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\Table(name: 'users')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 64)]
+    #[ORM\Column(length: 180)]
     private string $email;
 
     #[ORM\Column(length: 64)]
@@ -26,22 +26,14 @@ class User
     #[ORM\Column(length: 64)]
     private string $lastName;
 
-    #[ORM\Column(length: 64)]
+    #[ORM\Column]
     private string $password;
 
-    #[ORM\Column(enumType: Role::class)]
-    private Role $role;
-
     /**
-     * @var Collection<int, Thread>
+     * @var list<string>
      */
-    #[ORM\OneToMany(targetEntity: Thread::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $threads;
-
-    public function __construct()
-    {
-        $this->threads = new ArrayCollection();
-    }
+    #[ORM\Column]
+    private array $roles;
 
     public function getId(): ?int
     {
@@ -96,44 +88,32 @@ class User
         return $this;
     }
 
-    public function getRole(): Role
+    /**
+     * @return list<string>
+     */
+    public function getRoles(): array
     {
-        return $this->role;
-    }
-
-    public function setRole(Role $role): static
-    {
-        $this->role = $role;
-
-        return $this;
+        return $this->roles;
     }
 
     /**
-     * @return Collection<int, Thread>
+     * @param list<string> $roles
      */
-    public function getThreads(): Collection
+    public function setRoles(array $roles): static
     {
-        return $this->threads;
-    }
-
-    public function addThread(Thread $thread): static
-    {
-        if (!$this->threads->contains($thread)) {
-            $this->threads->add($thread);
-            $thread->setUser($this);
-        }
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function removeThread(Thread $thread): static
+    public function eraseCredentials(): void
     {
-        if ($this->threads->removeElement($thread)) {
-            if ($thread->getUser() === $this) {
-                $thread->setUser(null);
-            }
-        }
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
 
-        return $this;
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }
