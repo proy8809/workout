@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -34,6 +36,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private array $roles;
+
+    #[OneToMany(targetEntity: AccessToken::class, mappedBy: "user", fetch: "EAGER", orphanRemoval: true)]
+    private Collection $accessTokens;
+
+    #[OneToMany(targetEntity: Thread::class, mappedBy: "user", orphanRemoval: true)]
+    private Collection $threads;
+
+    #[OneToMany(targetEntity: Post::class, mappedBy: "user", orphanRemoval: true)]
+    private collection $posts;
+
 
     public function getId(): ?int
     {
@@ -115,5 +127,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function hasAccessToken(): bool
+    {
+        return $this->accessTokens->isEmpty() === false;
+    }
+
+    public function getAccessTokens(): Collection
+    {
+        return $this->accessTokens;
+    }
+
+    public function addAccessToken(AccessToken $accessToken): static
+    {
+        if (!$this->accessTokens->contains($accessToken)) {
+            $this->accessTokens->add($accessToken);
+            $accessToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccessToken(AccessToken $accessToken): static
+    {
+        if ($this->accessTokens->contains($accessToken)) {
+            $this->accessTokens->removeElement($accessToken);
+        }
+
+        return $this;
     }
 }

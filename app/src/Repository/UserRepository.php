@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Service\User\UserRepositoryInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -33,15 +35,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getOneOrNullResult() !== null;
     }
 
-    public function findById(int $id): User
+    public function findById(int $id): ?User
     {
-        $user = $this->find($id);
+        $user = $this->findOne($id);
 
         if (!isset($user)) {
             throw new NotFoundHttpException("User not found");
         }
 
         return $user;
+    }
+
+    public function findByEmail(string $email): ?User
+    {
+        return $this->findOneBy(["email" => $email]);
     }
 
     public function persist(User $user): User

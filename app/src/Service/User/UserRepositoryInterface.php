@@ -6,7 +6,9 @@ use App\Entity\User;
 
 interface UserRepositoryInterface
 {
-    public function findById(int $id): User;
+    public function findById(int $id): ?User;
+
+    public function findByEmail(string $email): ?User;
 
     public function exists(string $email): bool;
 

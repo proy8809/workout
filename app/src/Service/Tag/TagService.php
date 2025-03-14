@@ -34,7 +34,7 @@ class TagService
 
     public function remove(int $id): void
     {
-        $tagEntity = $this->tagRepository->find($id);
+        $tagEntity = $this->tagRepository->findById($id);
         $this->tagRepository->remove($tagEntity);
     }
 }

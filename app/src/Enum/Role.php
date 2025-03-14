@@ -4,8 +4,8 @@ namespace App\Enum;
 
 enum Role: string
 {
-    case ADMIN = "admin";
-    case USER = "user";
+    case ADMIN = "ROLE_ADMIN";
+    case USER = "ROLE_USER";
 
     /**
      * @return string[]

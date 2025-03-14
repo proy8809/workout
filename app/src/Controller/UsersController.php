@@ -6,6 +6,7 @@ use App\Service\User\UserService;
 use App\Service\User\CreateUserDto;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -16,6 +17,7 @@ final class UsersController extends AbstractController
     ) {
     }
 
+    #[IsGranted("ROLE_ADMIN")]
     #[Route("/users", name: "users_list", methods: ["GET"])]
     public function list(): JsonResponse
     {

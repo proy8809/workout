@@ -51,6 +51,10 @@ class UserService
     {
         $userEntity = $this->userRepository->findById($id);
 
+        if (!isset($userEntity)) {
+            return;
+        }
+
         $this->userRepository->remove($userEntity);
     }
 }
