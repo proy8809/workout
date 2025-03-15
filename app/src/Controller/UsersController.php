@@ -24,12 +24,14 @@ final class UsersController extends AbstractController
         return $this->json($this->userService->list(), 200);
     }
 
+    #[IsGranted("ROLE_ADMIN")]
     #[Route("/users", name: "users_create", methods: ["POST"])]
     public function create(#[MapRequestPayload()] CreateUserDto $createUser): JsonResponse
     {
         return $this->json($this->userService->create($createUser), 201);
     }
 
+    #[IsGranted("ROLE_ADMIN")]
     #[Route("/users/{id}", name: "users_remove", methods: ["DELETE"])]
     public function remove(int $id): JsonResponse
     {

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -129,14 +130,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function hasAccessToken(): bool
-    {
-        return $this->accessTokens->isEmpty() === false;
-    }
-
     public function getAccessTokens(): Collection
     {
         return $this->accessTokens;
+    }
+
+    public function hasActiveAccessToken(): bool
+    {
+        return $this->accessTokens->exists(
+            fn(int $key, AccessToken $accessToken) => $accessToken->isExpired() === false
+        );
+    }
+
+    public function getActiveAccessToken(): ?AccessToken
+    {
+        if (!$this->hasActiveAccessToken()) {
+            return null;
+        }
+
+        $this->accessTokens->filter(
+            fn(AccessToken $accessToken) => $accessToken->isExpired() === false
+        )->first();
     }
 
     public function addAccessToken(AccessToken $accessToken): static
@@ -154,6 +168,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->accessTokens->contains($accessToken)) {
             $this->accessTokens->removeElement($accessToken);
         }
+
+        return $this;
+    }
+
+    public function clearAccessTokens(): static
+    {
+        $this->accessTokens = new ArrayCollection([]);
 
         return $this;
     }

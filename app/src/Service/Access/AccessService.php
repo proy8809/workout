@@ -2,6 +2,7 @@
 
 namespace App\Service\Access;
 
+use App\Entity\User;
 use App\Entity\AccessToken;
 use App\Service\User\UserRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -29,7 +30,7 @@ class AccessService
             throw new UnauthorizedHttpException("Invalid credentials");
         }
 
-        if ($user->hasAccessToken()) {
+        if ($user->hasActiveAccessToken()) {
             throw new BadRequestHttpException("Already logged in");
         }
 
@@ -37,5 +38,11 @@ class AccessService
         $this->accessTokenRepository->persist($accessToken);
 
         return new AccessTokenDto(token: $accessToken->getToken());
+    }
+
+    public function logout(User $user): void
+    {
+        $user->clearAccessTokens();
+        $this->userRepository->persist($user);
     }
 }

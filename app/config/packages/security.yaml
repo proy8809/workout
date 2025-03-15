@@ -21,6 +21,9 @@ security:
             access_token:
                 token_handler: App\Service\Access\AccessTokenHandler
 
+            login_throttling:
+                max_attempts: 3
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
