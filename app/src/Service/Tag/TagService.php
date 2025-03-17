@@ -22,10 +22,11 @@ class TagService
         return array_map(fn(Tag $tagEntity) => $this->tagMapper->entityToDto($tagEntity), $tagEntities);
     }
 
-    public function create(string $tagTitle): TagDto
+    public function create(CreateTagDto $createTag): TagDto
     {
         $tagEntity = new Tag();
-        $tagEntity->setTitle($tagTitle);
+        $tagEntity->setTitle($createTag->title);
+        $tagEntity->setCanonical($createTag->canonical);
 
         $tagEntity = $this->tagRepository->persist($tagEntity);
 

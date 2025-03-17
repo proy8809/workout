@@ -10,7 +10,8 @@ class TagMapper
     {
         return new TagDto(
             id: $tag->getId(),
-            title: $tag->getTitle()
+            title: $tag->getTitle(),
+            canonical: $tag->getCanonical()
         );
     }
 }

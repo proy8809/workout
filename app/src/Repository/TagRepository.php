@@ -23,6 +23,16 @@ class TagRepository extends ServiceEntityRepository implements TagRepositoryInte
         return $this->find($id);
     }
 
+    /**
+     * @param Tag[] $canonical
+     * @return Tag[]
+     */
+    public function findByCanonical(array $canonical): array
+    {
+        return $this->findBy(["canonical" => $canonical]);
+
+    }
+
     public function persist(Tag $tag): Tag
     {
         $em = $this->getEntityManager();

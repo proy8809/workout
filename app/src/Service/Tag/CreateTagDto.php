@@ -2,10 +2,9 @@
 
 namespace App\Service\Tag;
 
-class TagDto
+class CreateTagDto
 {
     public function __construct(
-        public readonly int $id,
         public readonly string $title,
         public readonly string $canonical,
     ) {

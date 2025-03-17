@@ -11,6 +11,11 @@ interface TagRepositoryInterface
     /**
      * @return Tag[]
      */
+    public function findByCanonical(array $canonical): array;
+
+    /**
+     * @return Tag[]
+     */
     public function findAll(): array;
 
     public function persist(Tag $tag): Tag;

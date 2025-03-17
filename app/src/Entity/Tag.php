@@ -19,6 +19,9 @@ class Tag
     #[ORM\Column(length: 64)]
     private string $title;
 
+    #[ORM\Column(length: 64)]
+    private string $canonical;
+
     /**
      * @var Collection<int, ThreadTag>
      */
@@ -43,6 +46,18 @@ class Tag
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getCanonical(): string
+    {
+        return $this->canonical;
+    }
+
+    public function setCanonical(string $canonical): static
+    {
+        $this->canonical = $canonical;
 
         return $this;
     }

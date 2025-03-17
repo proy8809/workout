@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Request\CreateTagDto;
 use App\Service\Tag\TagService;
+use App\Service\Tag\CreateTagDto;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -28,7 +28,7 @@ final class TagsController extends AbstractController
     #[Route('/tags', name: 'tags_create', methods: ["POST"])]
     public function create(#[MapRequestPayload] CreateTagDto $createTag): JsonResponse
     {
-        return $this->json($this->tagService->create($createTag->title), 201);
+        return $this->json($this->tagService->create($createTag), 201);
     }
 
     #[IsGranted("ROLE_ADMIN")]
