@@ -18,35 +18,36 @@ class Thread
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'threads')]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
-
-    #[ORM\Column(length: 64)]
-    private string $title;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private string $content;
-
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
     /**
      * @var Collection<int, ThreadTag>
      */
-    #[ORM\OneToMany(targetEntity: ThreadTag::class, mappedBy: 'thread', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ThreadTag::class, mappedBy: 'thread', cascade: ["persist"], orphanRemoval: true)]
     private Collection $threadTags;
 
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'thread', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'thread', cascade: ["persist"], orphanRemoval: true)]
     private Collection $posts;
 
-    public function __construct()
-    {
+    public function __construct(
+        #[ORM\ManyToOne(inversedBy: 'threads')]
+        #[ORM\JoinColumn(nullable: false)]
+        private User $user,
+
+        #[ORM\Column(length: 64)]
+        private string $title,
+
+        #[ORM\Column(type: Types::TEXT)]
+        private string $content,
+    ) {
         $this->threadTags = new ArrayCollection();
         $this->posts = new ArrayCollection();
+
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -59,28 +60,43 @@ class Thread
         return $this->user;
     }
 
-    public function setUser(User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getTitle(): string
     {
         return $this->title;
     }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->threadTags->map(fn(ThreadTag $threadTag) => $threadTag->getTag());
+    }
+
+    /**
+     * @return Collection<int, Post>
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
 
     public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
     }
 
     public function setContent(string $content): static
@@ -90,52 +106,26 @@ class Thread
         return $this;
     }
 
-    public function getCreatedAt(): string
+    public function addTag(Tag $tag): static
     {
-        return $this->content;
-    }
+        $threadTag = new ThreadTag($this, $tag);
 
-    public function setCreatedAt(DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-
-    /**
-     * @return Collection<int, ThreadTag>
-     */
-    public function getThreadTags(): Collection
-    {
-        return $this->threadTags;
-    }
-
-    public function addThreadTag(ThreadTag $threadTag): static
-    {
         if (!$this->threadTags->contains($threadTag)) {
             $this->threadTags->add($threadTag);
-            $threadTag->setThread($this);
         }
 
         return $this;
     }
 
-    public function removeThreadTag(ThreadTag $threadTag): static
+    public function removeTag(Tag $tag): static
     {
+        $threadTag = new ThreadTag($this, $tag);
+
         if ($this->threadTags->contains($threadTag)) {
             $this->threadTags->removeElement($threadTag);
         }
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Post>
-     */
-    public function getPosts(): Collection
-    {
-        return $this->posts;
     }
 
     public function addPost(Post $post): static

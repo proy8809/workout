@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TagRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -16,21 +15,13 @@ class Tag
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 64)]
-    private string $title;
+    public function __construct(
+        #[ORM\Column(length: 64)]
+        private string $title,
 
-    #[ORM\Column(length: 64)]
-    private string $canonical;
-
-    /**
-     * @var Collection<int, ThreadTag>
-     */
-    #[ORM\OneToMany(targetEntity: ThreadTag::class, mappedBy: 'tag', orphanRemoval: true)]
-    private Collection $threadTags;
-
-    public function __construct()
-    {
-        $this->threadTags = new ArrayCollection();
+        #[ORM\Column(length: 64)]
+        private string $canonical
+    ) {
     }
 
     public function getId(): ?int
@@ -43,49 +34,8 @@ class Tag
         return $this->title;
     }
 
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
     public function getCanonical(): string
     {
         return $this->canonical;
-    }
-
-    public function setCanonical(string $canonical): static
-    {
-        $this->canonical = $canonical;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ThreadTag>
-     */
-    public function getThreadTags(): Collection
-    {
-        return $this->threadTags;
-    }
-
-    public function addThreadTag(ThreadTag $threadTag): static
-    {
-        if (!$this->threadTags->contains($threadTag)) {
-            $this->threadTags->add($threadTag);
-            $threadTag->setTag($this);
-        }
-
-        return $this;
-    }
-
-    public function removeThreadTag(ThreadTag $threadTag): static
-    {
-        if ($this->threadTags->contains($threadTag)) {
-            $this->threadTags->removeElement($threadTag);
-        }
-
-        return $this;
     }
 }

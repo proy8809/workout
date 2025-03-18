@@ -2,7 +2,6 @@
 
 namespace App\Service\User;
 
-use App\Enum\Role;
 use App\Entity\User;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -32,15 +31,16 @@ class UserService
             throw new ConflictHttpException("A user with the email {$createUserDto->email} already exists.");
         }
 
-        $userEntity = new User();
-
-        $userEntity->setEmail($createUserDto->email);
-        $userEntity->setFirstName($createUserDto->email);
-        $userEntity->setLastName($createUserDto->email);
-        $userEntity->setPassword(
-            $this->passwordHasher->hashPassword($userEntity, $createUserDto->password)
+        $userEntity = new User(
+            $createUserDto->email,
+            firstName: $createUserDto->firstName,
+            lastName: $createUserDto->lastName,
         );
+
         $userEntity->setRoles($createUserDto->roles);
+
+        $hashedPassword = $this->passwordHasher->hashPassword($userEntity, $createUserDto->password);
+        $userEntity->setPassword($hashedPassword);
 
         $userEntity = $this->userRepository->persist($userEntity);
 

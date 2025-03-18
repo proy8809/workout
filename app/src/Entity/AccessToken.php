@@ -18,18 +18,17 @@ class AccessToken
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ManyToOne(targetEntity: User::class, inversedBy: "accessTokens")]
-    #[JoinColumn(name: "user_id", onDelete: "CASCADE")]
-    private User $user;
-
-    #[ORM\Column(length: 128)]
-    private string $token;
-
     #[ORM\Column]
     private DateTimeImmutable $expiresAt;
 
-    public function __construct(User $user, string $token)
-    {
+    public function __construct(
+        #[ManyToOne(targetEntity: User::class, inversedBy: "accessTokens")]
+        #[JoinColumn(name: "user_id", onDelete: "CASCADE")]
+        private User $user,
+
+        #[ORM\Column(length: 128)]
+        private string $token
+    ) {
         $this->user = $user;
         $this->token = $token;
         $this->expiresAt = new DateTimeImmutable()->modify("+1 hour");
@@ -38,13 +37,6 @@ class AccessToken
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setUser(UserInterface $user): static
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getUser(): UserInterface

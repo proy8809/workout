@@ -24,12 +24,12 @@ class TagRepository extends ServiceEntityRepository implements TagRepositoryInte
     }
 
     /**
-     * @param Tag[] $canonical
+     * @param list<string> $canonicals
      * @return Tag[]
      */
-    public function findByCanonical(array $canonical): array
+    public function findByCanonicals(array $canonicals): array
     {
-        return $this->findBy(["canonical" => $canonical]);
+        return $this->findBy(["canonical" => $canonicals]);
 
     }
 

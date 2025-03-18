@@ -24,9 +24,10 @@ class TagService
 
     public function create(CreateTagDto $createTag): TagDto
     {
-        $tagEntity = new Tag();
-        $tagEntity->setTitle($createTag->title);
-        $tagEntity->setCanonical($createTag->canonical);
+        $tagEntity = new Tag(
+            title: $createTag->title,
+            canonical: $createTag->canonical
+        );
 
         $tagEntity = $this->tagRepository->persist($tagEntity);
 

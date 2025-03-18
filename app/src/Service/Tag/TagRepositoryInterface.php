@@ -9,9 +9,10 @@ interface TagRepositoryInterface
     public function findById(int $id): Tag;
 
     /**
+     * @param list<string> $canonicals
      * @return Tag[]
      */
-    public function findByCanonical(array $canonical): array;
+    public function findByCanonicals(array $canonicals): array;
 
     /**
      * @return Tag[]

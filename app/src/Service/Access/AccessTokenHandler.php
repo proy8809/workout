@@ -3,7 +3,6 @@
 namespace App\Service\Access;
 
 use DateTimeImmutable;
-use App\Repository\AccessTokenRepository;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
@@ -19,8 +18,8 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
     {
         $accessTokenEntity = $this->accessTokenRepository->findByToken($accessToken);
 
-        if (!isset($accessTokenEntity) || $accessTokenEntity->getExpiresAt() < new DateTimeImmutable()) {
-            throw new BadCredentialsException("Invalid credentials");
+        if (!isset($accessTokenEntity) || $accessTokenEntity->isExpired()) {
+            throw new BadCredentialsException("Not logged in");
         }
 
         return new UserBadge($accessTokenEntity->getUser()->getUserIdentifier());

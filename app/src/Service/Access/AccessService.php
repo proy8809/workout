@@ -3,7 +3,6 @@
 namespace App\Service\Access;
 
 use App\Entity\User;
-use App\Entity\AccessToken;
 use App\Service\User\UserRepositoryInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -12,7 +11,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AccessService
 {
     public function __construct(
-        private readonly AccessTokenRepositoryInterface $accessTokenRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher
     ) {
@@ -34,10 +32,12 @@ class AccessService
             throw new BadRequestHttpException("Already logged in");
         }
 
-        $accessToken = new AccessToken(user: $user, token: bin2hex(random_bytes(32)));
-        $this->accessTokenRepository->persist($accessToken);
+        $accessToken = bin2hex(random_bytes(32));
+        $user->addAccessToken($accessToken);
 
-        return new AccessTokenDto(token: $accessToken->getToken());
+        $this->userRepository->persist($user);
+
+        return new AccessTokenDto(token: $accessToken);
     }
 
     public function logout(User $user): void

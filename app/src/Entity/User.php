@@ -20,15 +20,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
-    private string $email;
-
-    #[ORM\Column(length: 64)]
-    private string $firstName;
-
-    #[ORM\Column(length: 64)]
-    private string $lastName;
-
     #[ORM\Column]
     private string $password;
 
@@ -38,15 +29,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles;
 
-    #[OneToMany(targetEntity: AccessToken::class, mappedBy: "user", fetch: "EAGER", orphanRemoval: true)]
+    #[OneToMany(
+        targetEntity: AccessToken::class,
+        mappedBy: "user",
+        cascade: ["persist"],
+        orphanRemoval: true
+    )]
     private Collection $accessTokens;
 
-    #[OneToMany(targetEntity: Thread::class, mappedBy: "user", orphanRemoval: true)]
-    private Collection $threads;
+    public function __construct(
+        #[ORM\Column(length: 128)]
+        private string $email,
 
-    #[OneToMany(targetEntity: Post::class, mappedBy: "user", orphanRemoval: true)]
-    private collection $posts;
+        #[ORM\Column(length: 64)]
+        private string $firstName,
 
+        #[ORM\Column(length: 64)]
+        private string $lastName,
+    ) {
+        $this->roles = ["ROLE_USER"];
+        $this->accessTokens = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -58,23 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     public function getFirstName(): string
     {
         return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): static
-    {
-        $this->firstName = $firstName;
-
-        return $this;
     }
 
     public function getLastName(): string
@@ -82,23 +71,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): static
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -109,12 +84,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->roles;
     }
 
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function setFirstName(string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function setLastName(string $lastName): static
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
     /**
      * @param list<string> $roles
      */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function hasActiveAccessToken(): bool
+    {
+        return $this->accessTokens->exists(
+            fn(int $key, AccessToken $accessToken) => $accessToken->isExpired() === false
+        );
+    }
+
+    public function addAccessToken(string $value): static
+    {
+        $accessToken = new AccessToken($this, $value);
+
+        if (!$this->accessTokens->contains($accessToken)) {
+            $this->accessTokens->add($accessToken);
+        }
+
+        return $this;
+    }
+
+    public function clearAccessTokens(): static
+    {
+        $this->accessTokens = new ArrayCollection([]);
 
         return $this;
     }
@@ -128,54 +156,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
-    }
-
-    public function getAccessTokens(): Collection
-    {
-        return $this->accessTokens;
-    }
-
-    public function hasActiveAccessToken(): bool
-    {
-        return $this->accessTokens->exists(
-            fn(int $key, AccessToken $accessToken) => $accessToken->isExpired() === false
-        );
-    }
-
-    public function getActiveAccessToken(): ?AccessToken
-    {
-        if (!$this->hasActiveAccessToken()) {
-            return null;
-        }
-
-        $this->accessTokens->filter(
-            fn(AccessToken $accessToken) => $accessToken->isExpired() === false
-        )->first();
-    }
-
-    public function addAccessToken(AccessToken $accessToken): static
-    {
-        if (!$this->accessTokens->contains($accessToken)) {
-            $this->accessTokens->add($accessToken);
-            $accessToken->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAccessToken(AccessToken $accessToken): static
-    {
-        if ($this->accessTokens->contains($accessToken)) {
-            $this->accessTokens->removeElement($accessToken);
-        }
-
-        return $this;
-    }
-
-    public function clearAccessTokens(): static
-    {
-        $this->accessTokens = new ArrayCollection([]);
-
-        return $this;
     }
 }

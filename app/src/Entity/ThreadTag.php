@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ThreadTagRepository;
 
@@ -15,16 +16,20 @@ class ThreadTag
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'threadTags')]
-    #[ORM\JoinColumn(nullable: false)]
-    private Thread $thread;
-
-    #[ORM\ManyToOne(inversedBy: 'threadTags')]
-    #[ORM\JoinColumn(nullable: false)]
-    private Tag $tag;
-
     #[ORM\Column]
-    private \DateTimeImmutable $addedAt;
+    private DateTimeImmutable $addedAt;
+
+    public function __construct(
+        #[ORM\ManyToOne(inversedBy: 'threadTags')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Thread $thread,
+
+        #[ORM\ManyToOne(inversedBy: 'threadTags')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Tag $tag
+    ) {
+        $this->addedAt = new DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -36,34 +41,13 @@ class ThreadTag
         return $this->thread;
     }
 
-    public function setThread(Thread $thread): static
-    {
-        $this->thread = $thread;
-
-        return $this;
-    }
-
     public function getTag(): Tag
     {
         return $this->tag;
     }
 
-    public function setTag(Tag $tag): static
-    {
-        $this->tag = $tag;
-
-        return $this;
-    }
-
-    public function getAddedAt(): \DateTimeImmutable
+    public function getAddedAt(): DateTimeImmutable
     {
         return $this->addedAt;
-    }
-
-    public function setAddedAt(\DateTimeImmutable $addedAt): static
-    {
-        $this->addedAt = $addedAt;
-
-        return $this;
     }
 }
