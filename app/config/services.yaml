@@ -24,6 +24,10 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    
+    App\DataFixtures\AppPurgerFactory:
+        tags:
+            - { name: 'doctrine.fixtures.purger_factory', alias: 'app_purger' }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

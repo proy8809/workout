@@ -3,10 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Service\User\UserRepositoryInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
