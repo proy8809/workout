@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\Thread\DetailedThread;
+namespace App\Service\Shared;
 
-class DetailedThreadUserDto
+class ResourceUserDto
 {
     public function __construct(
         public readonly int $id,

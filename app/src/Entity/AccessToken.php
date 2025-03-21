@@ -22,7 +22,7 @@ class AccessToken
     private DateTimeImmutable $expiresAt;
 
     public function __construct(
-        #[ManyToOne(targetEntity: User::class, inversedBy: "accessTokens")]
+        #[ManyToOne(targetEntity: User::class, inversedBy: "accessTokens", fetch: "EAGER")]
         #[JoinColumn(name: "user_id", onDelete: "CASCADE")]
         private User $user,
 

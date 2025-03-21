@@ -13,8 +13,9 @@ services:
 
         bind:
             Closure $mapDetailedThread: !closure '@App\Service\Thread\DetailedThread\DetailedThreadMapper'
-            Closure $mapDetailedThreadPost: !closure '@App\Service\Thread\DetailedThread\DetailedThreadPostMapper'
-            Closure $mapDetailedThreadUser: !closure '@App\Service\Thread\DetailedThread\DetailedThreadUserMapper'
+            Closure $mapListedThread: !closure '@App\Service\Thread\ListedThread\ListedThreadMapper'
+            Closure $mapPost: !closure '@App\Service\Post\PostMapper'
+            Closure $mapResourceUser: !closure '@App\Service\Shared\ResourceUserMapper'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

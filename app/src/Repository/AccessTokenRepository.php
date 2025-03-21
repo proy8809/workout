@@ -2,13 +2,10 @@
 
 namespace App\Repository;
 
-use DateTimeImmutable;
 use App\Entity\AccessToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\Collections\ArrayCollection;
 use App\Service\Access\AccessTokenRepositoryInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -27,7 +24,13 @@ class AccessTokenRepository extends ServiceEntityRepository implements AccessTok
 
     public function findByToken(string $token): ?AccessToken
     {
-        return $this->findOneBy(["token" => $token]);
+        return $this->createQueryBuilder("accessToken")
+            ->addSelect("user")
+            ->innerJoin("accessToken.user", "user")
+            ->where("accessToken.token = :token")
+            ->setParameter("token", $token)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function persist(AccessToken $accessToken): AccessToken

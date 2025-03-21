@@ -2,7 +2,6 @@
 
 namespace App\Service\Access;
 
-use DateTimeImmutable;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;

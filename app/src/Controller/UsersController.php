@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\User\UserService;
 use App\Service\User\CreateUserDto;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,7 +25,7 @@ final class UsersController extends AbstractController
         return $this->json($this->userService->list(), 200);
     }
 
-    #[IsGranted("ROLE_ADMIN")]
+    //#[IsGranted("ROLE_ADMIN")]
     #[Route("/users", name: "users_create", methods: ["POST"])]
     public function create(#[MapRequestPayload()] CreateUserDto $createUser): JsonResponse
     {
@@ -33,9 +34,9 @@ final class UsersController extends AbstractController
 
     #[IsGranted("ROLE_ADMIN")]
     #[Route("/users/{id}", name: "users_remove", methods: ["DELETE"])]
-    public function remove(int $id): JsonResponse
+    public function remove(User $userEntity): JsonResponse
     {
-        $this->userService->delete($id);
+        $this->userService->delete($userEntity);
 
         return $this->json([], 204);
     }

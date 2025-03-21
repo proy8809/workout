@@ -47,14 +47,8 @@ class UserService
         return $this->userMapper->entityToDto($userEntity);
     }
 
-    public function delete(int $id): void
+    public function delete(User $userEntity): void
     {
-        $userEntity = $this->userRepository->findById($id);
-
-        if (!isset($userEntity)) {
-            return;
-        }
-
         $this->userRepository->remove($userEntity);
     }
 }

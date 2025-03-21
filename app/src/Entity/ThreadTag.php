@@ -24,7 +24,7 @@ class ThreadTag
         #[ORM\JoinColumn(nullable: false)]
         private Thread $thread,
 
-        #[ORM\ManyToOne(inversedBy: 'threadTags')]
+        #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false)]
         private Tag $tag
     ) {

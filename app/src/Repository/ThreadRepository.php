@@ -17,6 +17,35 @@ class ThreadRepository extends ServiceEntityRepository implements ThreadReposito
         parent::__construct($registry, Thread::class);
     }
 
+    /**
+     * @return list<Thread>
+     */
+    public function findAllListed(): array
+    {
+        return $this->createQueryBuilder("thread")
+            ->addSelect("threadTag, tag, post, user")
+            ->leftJoin("thread.threadTags", "threadTag")
+            ->leftJoin("threadTag.tag", "tag")
+            ->leftJoin("thread.posts", "post")
+            ->leftJoin("thread.user", "user")
+            ->orderBy("post.createdAt", "DESC")
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findDetailedById(int $id): ?Thread
+    {
+        return $this->createQueryBuilder("thread")
+            ->addSelect("threadTags, tag, posts")
+            ->leftJoin("thread.threadTags", "threadTags")
+            ->leftJoin("threadTags.tag", "tag")
+            ->leftJoin("thread.posts", "posts")
+            ->where("thread.id = :id")
+            ->setParameter("id", $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function persist(Thread $thread): Thread
     {
         $em = $this->getEntityManager();
@@ -25,6 +54,14 @@ class ThreadRepository extends ServiceEntityRepository implements ThreadReposito
         $em->flush();
 
         return $thread;
+    }
+
+    public function remove(Thread $thread): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($thread);
+
+        $em->flush();
     }
 
     //    /**

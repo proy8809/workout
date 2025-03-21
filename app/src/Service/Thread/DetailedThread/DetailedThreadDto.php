@@ -2,11 +2,14 @@
 
 namespace App\Service\Thread\DetailedThread;
 
+use App\Service\Post\PostDto;
+use App\Service\Shared\ResourceUserDto;
+
 class DetailedThreadDto
 {
     /**
      * @param list<string> $tags
-     * @param list<DetailedThreadPostDto> $posts
+     * @param list<PostDto> $posts
      */
     public function __construct(
         public readonly int $id,
@@ -14,7 +17,7 @@ class DetailedThreadDto
         public readonly string $content,
         public readonly array $tags,
         public readonly array $posts,
-        public readonly DetailedThreadUserDto $user,
+        public readonly ResourceUserDto $user,
         public readonly string $createdAt,
     ) {
     }

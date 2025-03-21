@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Service\Thread\DetailedThread;
+namespace App\Service\Post;
 
-class DetailedThreadPostDto
+use App\Service\Shared\ResourceUserDto;
+
+class PostDto
 {
     public function __construct(
         public readonly int $id,
         public readonly string $content,
-        public readonly DetailedThreadUserDto $user,
+        public readonly ResourceUserDto $user,
         public readonly string $createdAt,
     ) {
-
     }
 }

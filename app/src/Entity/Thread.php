@@ -34,7 +34,7 @@ class Thread
     private Collection $posts;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'threads')]
+        #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false)]
         private User $user,
 
@@ -83,6 +83,31 @@ class Thread
         return $this->threadTags->map(fn(ThreadTag $threadTag) => $threadTag->getTag());
     }
 
+    public function getNbPosts(): int
+    {
+        return $this->posts->count();
+    }
+
+    public function getLatestPostAt(): DateTimeImmutable
+    {
+        $iterator = $this->posts->getIterator();
+        $iterator->uasort(
+            fn(Post $compared, Post $reference) =>
+            $compared->getCreatedAt()->getTimestamp() > $reference->getCreatedAt()->getTimestamp() ? -1 : 1
+        );
+
+        /**
+         * @var Collection<int,Post>
+         */
+        $collection = new ArrayCollection(iterator_to_array($iterator));
+
+        if ($collection->isEmpty()) {
+            return $this->createdAt;
+        }
+
+        return $collection->first()->getCreatedAt();
+    }
+
     /**
      * @return Collection<int, Post>
      */
@@ -106,25 +131,35 @@ class Thread
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    /**
+     * @param list<Tag> $tags
+     */
+    public function setTags(array $tags): static
     {
-        $threadTag = new ThreadTag($this, $tag);
+        $this->threadTags = new ArrayCollection();
 
-        if (!$this->threadTags->contains($threadTag)) {
+        foreach ($tags as $tag) {
+            $threadTag = new ThreadTag($this, $tag);
             $this->threadTags->add($threadTag);
         }
 
-        return $this;
-    }
+        /*
+                foreach ($tags as $tag) {
+                    $threadTag = new ThreadTag($this, $tag);
 
-    public function removeTag(Tag $tag): static
-    {
-        $threadTag = new ThreadTag($this, $tag);
+                    if (!$this->threadTags->contains($threadTag)) {
+                        $this->threadTags->add($threadTag);
+                    }
+                }
 
-        if ($this->threadTags->contains($threadTag)) {
-            $this->threadTags->removeElement($threadTag);
-        }
+                $threadTagsToRemove = $this->threadTags->filter(
+                    fn(ThreadTag $threadTag) => !in_array($threadTag->getTag()->getId(), $tags)
+                );
 
+                foreach ($threadTagsToRemove as $threadTagToRemove) {
+                    $this->threadTags->removeElement($threadTagToRemove);
+                }
+        */
         return $this;
     }
 
