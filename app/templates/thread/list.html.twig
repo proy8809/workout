@@ -1,0 +1,34 @@
+
+<header>
+    <h1>Messages du forum</h1>
+</header>
+
+<main>
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Nb. Posts</th>
+                <th>Création</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for thread in threads %}
+                <tr>
+                    <td>
+                        <a href="/threads/{{ thread.id }}">{{ thread.title }}</a>
+                        {{ thread.userFullName }}
+                    </td>
+                    <td>
+                        {{ thread.nbPosts }}
+                    </td>
+                    <td>
+                        {{ thread.createdAt }}
+                        {{ thread.latestPostAt }}
+                    </td>
+                </tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+</main>
+

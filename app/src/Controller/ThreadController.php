@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Thread;
-use App\Service\Thread\WritePostDto;
 use App\Service\Thread\ThreadService;
 use App\Service\Thread\WriteThreadDto;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -20,17 +18,22 @@ final class ThreadController extends AbstractController
     ) {
     }
 
-    #[Route('/threads/{threadId}', methods: ["GET"], name: 'thread_get')]
-    public function get(int $threadId): JsonResponse
+    #[Route('/threads', methods: ["GET"], name: 'thread_list')]
+    public function list(): Response
     {
-        return $this->json($this->threadService->get($threadId));
+        return $this->render("thread/list.html.twig", [
+            "threads" => $this->threadService->list()
+        ]);
     }
 
-    #[Route('/threads', methods: ["GET"], name: 'thread_list')]
-    public function list(): JsonResponse
+    #[Route('/threads/{threadId}', methods: ["GET"], name: 'thread_show')]
+    public function show(int $threadId): Response
     {
-        return $this->json($this->threadService->list());
+        return $this->render("thread/show.html.twig", [
+            "thread" => $this->threadService->get($threadId)
+        ]);
     }
+
 
     #[Route('/threads', methods: ["POST"], name: 'thread_create')]
     public function create(

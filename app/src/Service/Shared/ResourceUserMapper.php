@@ -10,8 +10,7 @@ class ResourceUserMapper
     {
         return new ResourceUserDto(
             id: $user->getId(),
-            firstName: $user->getFirstName(),
-            lastName: $user->getLastName()
+            fullName: sprintf("%s %s", $user->getFirstName(), $user->getLastName())
         );
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\Thread;
 use App\Service\Tag\TagRepositoryInterface;
 use App\Service\Thread\ListedThread\ListedThreadDto;
 use App\Service\Thread\DetailedThread\DetailedThreadDto;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ThreadService
 {
@@ -26,6 +27,10 @@ class ThreadService
     public function get(int $threadId): DetailedThreadDto
     {
         $threadEntity = $this->threadRepository->findDetailedById($threadId);
+
+        if (!isset($threadEntity)) {
+            throw new NotFoundHttpException("Thread does not exist");
+        }
 
         return ($this->mapDetailedThread)($threadEntity);
     }
@@ -63,6 +68,10 @@ class ThreadService
     {
         $threadEntity = $this->threadRepository->findDetailedById($threadId);
 
+        if (!isset($threadEntity)) {
+            throw new NotFoundHttpException("Thread does not exist");
+        }
+
         $threadEntity->setTitle($writeThread->title);
         $threadEntity->setContent($writeThread->content);
 
@@ -77,6 +86,10 @@ class ThreadService
     public function delete(int $threadId): void
     {
         $threadEntity = $this->threadRepository->findDetailedById($threadId);
+
+        if (!isset($threadEntity)) {
+            throw new NotFoundHttpException("Thread does not exist");
+        }
 
         $this->threadRepository->remove($threadEntity);
     }
