@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
+imports:
+    - { resource: services/post_sorter.yaml }
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -14,7 +17,9 @@ services:
         bind:
             Closure $mapDetailedThread: !closure '@App\Service\Thread\DetailedThread\DetailedThreadMapper'
             Closure $mapListedThread: !closure '@App\Service\Thread\ListedThread\ListedThreadMapper'
+            Closure $sortListedThreads: !closure '@App\Service\Thread\ListedThread\ListedThreadSorter'
             Closure $mapPost: !closure '@App\Service\Post\PostMapper'
+            Closure $sortPosts: !closure '@App\Service\Post\PostSorter'
             Closure $mapResourceUser: !closure '@App\Service\Shared\ResourceUserMapper'
 
     # makes classes in src/ available to be used as services
@@ -29,6 +34,10 @@ services:
     App\DataFixtures\AppPurgerFactory:
         tags:
             - { name: 'doctrine.fixtures.purger_factory', alias: 'app_purger' }
+
+    App\Service\Thread\DetailedThread\DetailedThreadMapper:
+        arguments:
+            $sortPosts: !closure '@post_sorter.descending'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

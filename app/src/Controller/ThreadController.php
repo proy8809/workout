@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use App\Enum\SortDirection;
 use App\Service\Thread\ThreadService;
 use App\Service\Thread\WriteThreadDto;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 final class ThreadController extends AbstractController
 {
@@ -22,7 +23,7 @@ final class ThreadController extends AbstractController
     public function list(): Response
     {
         return $this->render("thread/list.html.twig", [
-            "threads" => $this->threadService->list()
+            "threads" => $this->threadService->list(SortDirection::Descending)
         ]);
     }
 
@@ -33,7 +34,6 @@ final class ThreadController extends AbstractController
             "thread" => $this->threadService->get($threadId)
         ]);
     }
-
 
     #[Route('/threads', methods: ["POST"], name: 'thread_create')]
     public function create(

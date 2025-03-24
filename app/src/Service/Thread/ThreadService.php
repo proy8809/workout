@@ -2,23 +2,26 @@
 
 namespace App\Service\Thread;
 
-use Closure;
-use App\Entity\User;
 use App\Entity\Thread;
+use App\Entity\User;
+use App\Enum\SortDirection;
 use App\Service\Tag\TagRepositoryInterface;
-use App\Service\Thread\ListedThread\ListedThreadDto;
 use App\Service\Thread\DetailedThread\DetailedThreadDto;
+use App\Service\Thread\ListedThread\ListedThreadDto;
+use Closure;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ThreadService
 {
     /**
+     * @param \Closure(list<Thread>,SortDirection): list<Thread> $sortListedThreads
      * @param \Closure(Thread): DetailedThreadDto $mapDetailedThread
      * @param \Closure(Thread): ListedThreadDto $mapListedThread
      */
     public function __construct(
         private readonly ThreadRepositoryInterface $threadRepository,
         private readonly TagRepositoryInterface $tagRepository,
+        private readonly Closure $sortListedThreads,
         private readonly Closure $mapDetailedThread,
         private readonly Closure $mapListedThread,
     ) {
@@ -38,9 +41,9 @@ class ThreadService
     /**
      * @return list<ListedThreadDto>
      */
-    public function list(): array
+    public function list(SortDirection $sortDirection = SortDirection::Ascending): array
     {
-        $threadEntities = $this->threadRepository->findAllListed();
+        $threadEntities = ($this->sortListedThreads)($this->threadRepository->findAllListed(), $sortDirection);
 
         return array_map(
             fn(Thread $thread) => ($this->mapListedThread)($thread),

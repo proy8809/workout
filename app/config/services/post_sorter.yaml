@@ -1,0 +1,10 @@
+services:
+    post_sorter.ascending:
+        class: App\Service\Post\PostSorter
+        arguments:
+          $sortDirection: !php/const App\Enum\SortDirection::Ascending
+
+    post_sorter.descending:
+        class: App\Service\Post\PostSorter
+        arguments:
+          $sortDirection: !php/const App\Enum\SortDirection::Descending

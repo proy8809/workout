@@ -1,25 +1,41 @@
+{% extends "base.html.twig" %}
 
-<main>
-    <article>
-        <h1>{{ thread.title }}</h1>
-        <header>
-            <time datetime="{{ thread.createdAt }}">{{ thread.createdAt }}</time>
-            <p>par <address>{{thread.user.fullName}}</address></p>
-        </header>
-        <p>{{ thread.content }}</p>
-    </article>
-
+{% block body %}
     <section>
-        <h2>Réponses</h2>
-        {% for post in thread.posts %}
-            <article>
-                <header>
-                    <time datetime="{{ post.createdAt }}">{{ post.createdAt }}</time>
-                    <p>par <address>{{ post.user.fullName }}</address></p>
-                </header>
-                <p>{{ post.content }}</p>
-            </article>
-        {% endfor %}
-    </section>
-</main>
+        <header class="my-8">
+            <a href="{{ path('thread_list') }}" class="text-blue-800">Retour à la liste</a>
+            <h1 class="text-3xl">Visualisation du thread</h1>
+        </header>
 
+        <article>
+            <div class="my-4">
+                <h2 class="text-base font-bold">{{ thread.title }}</h2>
+                <div class="text-xs text-neutral-600">
+                    <span>par {{ thread.user.fullName }}</span> |  <span>le {{ thread.createdAt }}</span>
+                </div>
+            </div>
+            <div>
+                <p>{{ thread.content }}</p>
+            </div>
+        </article>
+
+        <hr class="border-black my-4" />
+
+        <div>
+            {% for post in thread.posts %}
+                <article>
+                    <div class="text-xs text-neutral-600">
+                        <span>par {{ post.user.fullName }}</span> |  <span>le {{ post.createdAt }}</span>
+                    </div>
+                    <div>
+                        <p>{{ post.content }}</p>
+                    </div>
+                </article>
+
+                <hr class="my-4" />
+            {% else %}
+                <h2 class="text-base">Aucun post à afficher</h2>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

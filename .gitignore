@@ -1,8 +1,14 @@
 .env.local
 .env.local.php
 .env.*.local
-.vscode
-config/secrets/prod/prod.decrypt.private.php
-public/bundles/
-var/
-vendor/
+.idea
+app/config/secrets/prod/prod.decrypt.private.php
+app/public/bundles/
+app/var/
+app/vendor/
+
+###> symfony/asset-mapper ###
+app/public/assets/
+app/assets/vendor/
+###< symfony/asset-mapper ###
+
