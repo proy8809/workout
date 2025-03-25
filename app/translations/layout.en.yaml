@@ -1,0 +1,5 @@
+navigation:
+    items:
+        threads: Show all threads
+        login: Login
+        logout: Logout

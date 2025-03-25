@@ -1,19 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{# ... #}
-
 {% block body %}
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <section class="flex flex-col gap-8">
+        <header>
+            <h1 class="text-3xl">{{ "title" | trans(domain="login") }}</h1>
+        </header>
 
-    <form action="{{ path('app_login') }}" method="post">
-        <twig:TextInput id="username" name="_username" label="Courriel" :value="last_username" />
-        <twig:TextInput id="password" name="_password" type="password" label="Mot de passe" />
+        <form action="{{ path('app_login') }}" method="post">
+            {% if error %}
+                <twig:Alert :content="error.messageKey | trans(domain='security')"
+                            variant="danger"
+                />
+            {% endif %}
 
-        <input type="hidden" name="_target_path" value="/threads">
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            <twig:TextInput id="username"
+                            name="_username"
+                            :label="'form.inputs.labels.email' | trans(domain='login')"
+                            :value="last_username"
+            />
+            <twig:TextInput id="password"
+                            name="_password"
+                            type="password"
+                            :label="'form.inputs.labels.password' | trans(domain='login')"
+            />
 
-        <twig:Button variant="primary" type="submit" text="Se connecter" />
-    </form>
+            <input type="hidden" name="_target_path" value="/threads">
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            <twig:Button variant="primary"
+                         type="submit"
+                         :text="'form.buttons.login' | trans(domain='login')" />
+        </form>
+    </section>
 {% endblock %}

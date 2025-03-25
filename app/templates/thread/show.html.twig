@@ -2,16 +2,16 @@
 
 {% block body %}
     <section>
-        <header class="my-8">
-            <a href="{{ path('thread_list') }}" class="text-blue-800">Retour à la liste</a>
-            <h1 class="text-3xl">Visualisation du thread</h1>
+        <header>
+            <h1 class="text-3xl">{{ "title" | trans(domain="thread") }}</h1>
         </header>
 
         <article>
             <div class="my-4">
                 <h2 class="text-base font-bold">{{ thread.title }}</h2>
                 <div class="text-xs text-neutral-600">
-                    <span>par {{ thread.user.fullName }}</span> |  <span>le {{ thread.createdAt }}</span>
+                    <span>{{ "terms.by" | trans({ by: thread.user.fullName }, "thread") }}</span> |
+                    <span>{{ "terms.on" | trans({ on: thread.createdAt }, "thread") }}</span>
                 </div>
             </div>
             <div>
@@ -25,7 +25,8 @@
             {% for post in thread.posts %}
                 <article>
                     <div class="text-xs text-neutral-600">
-                        <span>par {{ post.user.fullName }}</span> |  <span>le {{ post.createdAt }}</span>
+                        <span>{{ "terms.by" | trans({ by: post.user.fullName }, "thread") }}</span> |
+                        <span>{{ "terms.on" | trans({ on: post.createdAt }, "thread") }}</span>
                     </div>
                     <div>
                         <p>{{ post.content }}</p>
@@ -34,7 +35,7 @@
 
                 <hr class="my-4" />
             {% else %}
-                <h2 class="text-base">Aucun post à afficher</h2>
+                <h2 class="text-base">{{ "sentences.no_post" | trans(domain="thread") }}</h2>
             {% endfor %}
         </div>
     </section>

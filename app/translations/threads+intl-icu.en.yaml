@@ -1,0 +1,11 @@
+title: All forum threads
+terms:
+    latest_post_at: latest post at {datetime}
+    by: by {by}
+    on: on {on}
+    nb_posts: >-
+        {nb_posts, plural,
+            =0 {No post}
+            =1 {# post}
+            other {# posts}
+        }

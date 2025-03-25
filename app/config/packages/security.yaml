@@ -21,7 +21,12 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+
                 enable_csrf: true
+
+            logout:
+                path: /logout
+                target: app_login
 
             # access_token:
             #     token_handler: App\Service\Access\AccessTokenHandler

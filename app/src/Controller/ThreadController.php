@@ -19,15 +19,15 @@ final class ThreadController extends AbstractController
     ) {
     }
 
-    #[Route('/threads', methods: ["GET"], name: 'thread_list')]
-    public function list(#[CurrentUser] $user): Response
+    #[Route(path: '/threads', name: 'thread_list', methods: ["GET"])]
+    public function list(): Response
     {
         return $this->render("thread/list.html.twig", [
             "threads" => $this->threadService->list(SortDirection::Descending)
         ]);
     }
 
-    #[Route('/threads/{threadId}', methods: ["GET"], name: 'thread_show')]
+    #[Route('/threads/{threadId}', name: 'thread_show', methods: ["GET"])]
     public function show(int $threadId): Response
     {
         return $this->render("thread/show.html.twig", [
@@ -35,7 +35,7 @@ final class ThreadController extends AbstractController
         ]);
     }
 
-    #[Route('/threads', methods: ["POST"], name: 'thread_create')]
+    #[Route('/threads', name: 'thread_create', methods: ["POST"])]
     public function create(
         #[CurrentUser] $userEntity,
         #[MapRequestPayload] WriteThreadDto $writeThread
@@ -43,13 +43,13 @@ final class ThreadController extends AbstractController
         return $this->json($this->threadService->create($userEntity, $writeThread), 201);
     }
 
-    #[Route('/threads/{id}', methods: ["PUT"], name: 'thread_update')]
+    #[Route('/threads/{id}', name: 'thread_update', methods: ["PUT"])]
     public function update(int $threadId, #[MapRequestPayload] WriteThreadDto $writeThread): JsonResponse
     {
         return $this->json($this->threadService->update($threadId, $writeThread));
     }
 
-    #[Route('/threads/{threadId}', methods: ["DELETE"], name: 'thread_delete')]
+    #[Route('/threads/{threadId}', name: 'thread_delete', methods: ["DELETE"])]
     public function remove(int $threadId): JsonResponse
     {
         $this->threadService->delete($threadId);

@@ -1,0 +1,8 @@
+title: "Login Page"
+form:
+    inputs:
+        labels:
+            email: "Email"
+            password: "Password"
+    buttons:
+        login: "Login"
