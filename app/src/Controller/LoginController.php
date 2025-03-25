@@ -2,37 +2,27 @@
 
 namespace App\Controller;
 
-use App\Service\Access\LoginDto;
-use App\Service\Access\AccessService;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\RateLimiter\LimiterInterface;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 final class LoginController extends AbstractController
 {
-    private readonly LimiterInterface $limiter;
-
     public function __construct(
-        private readonly AccessService $accessService,
-        RateLimiterFactory $apiLimiter
+        private readonly AuthenticationUtils $authenticationUtils
     ) {
-        $this->limiter = $apiLimiter->create();
     }
 
-    #[Route('/login', name: 'login_action', methods: ["POST"])]
-    public function __invoke(#[MapRequestPayload] LoginDto $loginDto): JsonResponse
+    #[Route('/login', name: 'app_login')]
+    public function index(): Response
     {
-        if (!$this->limiter->consume(1)->isAccepted()) {
-            throw new TooManyRequestsHttpException();
-        }
+        $error = $this->authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $this->authenticationUtils->getLastUsername();
 
-        return $this->json(
-            $this->accessService->login($loginDto),
-            201
-        );
+        return $this->render('login/index.html.twig', [
+            "last_username" => $lastUsername,
+            "error" => $error,
+        ]);
     }
 }

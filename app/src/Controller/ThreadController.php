@@ -20,7 +20,7 @@ final class ThreadController extends AbstractController
     }
 
     #[Route('/threads', methods: ["GET"], name: 'thread_list')]
-    public function list(): Response
+    public function list(#[CurrentUser] $user): Response
     {
         return $this->render("thread/list.html.twig", [
             "threads" => $this->threadService->list(SortDirection::Descending)
