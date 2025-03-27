@@ -14,10 +14,10 @@ class ListedThreadSorter
      */
     public function __invoke(array $threads, SortDirection $sortDirection = SortDirection::Ascending): array
     {
-        uasort($threads, fn(Thread $compared, Thread $reference) =>
+        uasort($threads, fn (Thread $compared, Thread $reference) =>
             $sortDirection === SortDirection::Ascending ?
-                $compared->getCreatedAt()->getTimestamp() <=> $reference->getCreatedAt()->getTimestamp() :
-                $reference->getCreatedAt()->getTimestamp() <=> $compared->getCreatedAt()->getTimestamp()
+                $compared->getLatestPostAt()->getTimestamp() <=> $reference->getLatestPostAt()->getTimestamp() :
+                $reference->getLatestPostAt()->getTimestamp() <=> $compared->getLatestPostAt()->getTimestamp()
         );
 
         return $threads;

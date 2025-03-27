@@ -2,8 +2,9 @@
 
 {% block body %}
     <section>
-        <header>
+        <header class="flex justify-between items-center">
             <h1 class="text-3xl">{{ "title" | trans(domain="thread") }}</h1>
+            <twig:Button :text="'buttons.new_post' | trans(domain='thread')" />
         </header>
 
         <article>

@@ -1,4 +1,6 @@
 title: All forum threads
+buttons:
+    new_thread: New Thread
 terms:
     latest_post_at: latest post at {datetime}
     by: by {by}

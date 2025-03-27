@@ -1,4 +1,6 @@
 title: Posts of thread
+buttons:
+    new_post: New Post
 terms:
     by: by {by}
     on: on {on}
