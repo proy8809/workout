@@ -4,7 +4,11 @@
     <section class="flex flex-col gap-8">
         <header class="flex justify-between items-center">
             <h1 class="text-3xl">{{ "title" | trans(domain="threads") }}</h1>
-            <twig:Button :text="'buttons.new_thread' | trans(domain='threads')" />
+            <div data-controller="form-modal">
+                <twig:Button :text="'buttons.new_thread' | trans(domain='threads')" data-action="form-modal#openModal" />
+                {% include "partials/_form_modal.html.twig" with { title: "New Thread" } %}
+            </div>
+
         </header>
 
         <div class="flex flex-col gap-4">
