@@ -8,28 +8,29 @@
 
         <form action="{{ path('app_login') }}" method="post">
             {% if error %}
-                <twig:Alert :content="error.messageKey | trans(domain='security')"
-                            variant="danger"
-                />
+                <div class="alert danger">
+                    {{ error.messageKey | trans(domain="security") }}
+                </div>
             {% endif %}
 
-            <twig:TextInput id="username"
-                            name="_username"
-                            :label="'form.inputs.labels.email' | trans(domain='login')"
-                            :value="last_username"
-            />
-            <twig:TextInput id="password"
-                            name="_password"
-                            type="password"
-                            :label="'form.inputs.labels.password' | trans(domain='login')"
-            />
+            <div class="mb-4">
+                <label for="username">{{ "form.inputs.labels.email" | trans(domain="login") }}</label>
+                <input type="text" id="username" name="_username" />
+            </div>
+
+            <div class="mb-4">
+                <label for="password">{{ "form.inputs.labels.password" | trans(domain="login") }}</label>
+                <input type="password" id="password" name="_password" />
+            </div>
 
             <input type="hidden" name="_target_path" value="/threads">
             <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-            <twig:Button variant="primary"
-                         type="submit"
-                         :text="'form.buttons.login' | trans(domain='login')" />
+            <div class="flex justify-end">
+                <button class="btn primary" type="submit">
+                    {{ "form.buttons.login" | trans(domain="login") }}
+                </button>
+            </div>
         </form>
     </section>
 {% endblock %}

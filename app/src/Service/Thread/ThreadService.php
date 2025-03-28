@@ -53,11 +53,12 @@ class ThreadService
 
     public function create(User $userEntity, WriteThreadDto $writeThread): DetailedThreadDto
     {
-        $threadEntity = new Thread(
-            user: $userEntity,
-            title: $writeThread->title,
-            content: $writeThread->content
-        );
+        $threadEntity = new Thread();
+
+        $threadEntity->setUser($userEntity)
+            ->setTitle($writeThread->title)
+            ->setContent($writeThread->content)
+            ->setCreatedAt(new \DateTimeImmutable());
 
         $tagEntities = $this->tagRepository->findByCanonicals($writeThread->tags);
         $threadEntity->setTags($tagEntities);

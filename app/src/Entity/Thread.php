@@ -18,6 +18,16 @@ class Thread
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\Column(length: 64)]
+    private ?string $title = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
@@ -33,17 +43,7 @@ class Thread
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'thread', cascade: ["persist"], orphanRemoval: true)]
     private Collection $posts;
 
-    public function __construct(
-        #[ORM\ManyToOne]
-        #[ORM\JoinColumn(nullable: false)]
-        private User $user,
-
-        #[ORM\Column(length: 64)]
-        private string $title,
-
-        #[ORM\Column(type: Types::TEXT)]
-        private string $content,
-    ) {
+    public function __construct() {
         $this->threadTags = new ArrayCollection();
         $this->posts = new ArrayCollection();
 
@@ -60,12 +60,12 @@ class Thread
         return $this->user;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }
@@ -116,6 +116,11 @@ class Thread
         return $this->posts;
     }
 
+    public function setUser(User $user): static {
+        $this->user = $user;
+
+        return $this;
+    }
 
     public function setTitle(string $title): static
     {
@@ -127,6 +132,13 @@ class Thread
     public function setContent(string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -143,23 +155,6 @@ class Thread
             $this->threadTags->add($threadTag);
         }
 
-        /*
-                foreach ($tags as $tag) {
-                    $threadTag = new ThreadTag($this, $tag);
-
-                    if (!$this->threadTags->contains($threadTag)) {
-                        $this->threadTags->add($threadTag);
-                    }
-                }
-
-                $threadTagsToRemove = $this->threadTags->filter(
-                    fn(ThreadTag $threadTag) => !in_array($threadTag->getTag()->getId(), $tags)
-                );
-
-                foreach ($threadTagsToRemove as $threadTagToRemove) {
-                    $this->threadTags->removeElement($threadTagToRemove);
-                }
-        */
         return $this;
     }
 

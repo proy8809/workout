@@ -16,21 +16,21 @@ class Post
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
+
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Thread $thread;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
+
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'posts')]
-        #[ORM\JoinColumn(nullable: false)]
-        private User $user,
-
-        #[ORM\ManyToOne(inversedBy: 'posts')]
-        #[ORM\JoinColumn(nullable: false)]
-        private Thread $thread,
-
-        #[ORM\Column(type: Types::TEXT)]
-        private string $content,
-    ) {
+    public function __construct() {
         $this->createdAt = new DateTimeImmutable();
     }
 
@@ -44,13 +44,12 @@ class Post
         return $this->thread;
     }
 
-
     public function getUser(): User
     {
         return $this->user;
     }
 
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }
@@ -63,6 +62,13 @@ class Post
     public function setThread(Thread $thread): static
     {
         $this->thread = $thread;
+
+        return $this;
+    }
+
+    public function setUser(User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

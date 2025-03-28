@@ -11,3 +11,10 @@ terms:
             =1 {# post}
             other {# posts}
         }
+thread_form:
+    create_title: New Thread
+    edit_title: Edit Thread
+    inputs:
+        labels:
+            title: Title
+            content: Content

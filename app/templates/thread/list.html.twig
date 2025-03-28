@@ -5,8 +5,16 @@
         <header class="flex justify-between items-center">
             <h1 class="text-3xl">{{ "title" | trans(domain="threads") }}</h1>
             <div data-controller="form-modal">
-                <twig:Button :text="'buttons.new_thread' | trans(domain='threads')" data-action="form-modal#openModal" />
-                {% include "partials/_form_modal.html.twig" with { title: "New Thread" } %}
+                <button class="btn primary" data-action="form-modal#openModal">
+                    {{ "buttons.new_thread" | trans(domain="threads") }}
+                </button>
+                <div data-form-modal-target="modal"
+                     data-action="click->form-modal#backdropClick"
+                     id="modal-backdrop"
+                     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 hidden"
+                >
+                    <twig:ThreadForm />
+                </div>
             </div>
 
         </header>

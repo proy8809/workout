@@ -4,14 +4,5 @@
      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 hidden" >
 
     <div class="bg-white rounded-lg p-6 w-1/3 flex flex-col gap-4">
-        <h2 class="text-xl font-semibold">{{ title }}</h2>
-        <div class="flex-1">
-            <twig:TextInput id="title" name="title" label="Titre"></twig:TextInput>
-            <twig:TextArea :rows="6" id="content" name="title" label="Contenu" />
-        </div>
-        <div class="flex justify-end gap-1">
-            <twig:Button variant="danger" :text="'actions.cancel' | trans(domain='general')" data-action="form-modal#closeModal" />
-            <twig:Button variant="primary" :text="'actions.save' | trans(domain='general')" />
-        </div>
     </div>
 </div>

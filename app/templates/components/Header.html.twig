@@ -1,8 +1,8 @@
 <nav class="bg-white px-6 py-2 h-[5vh] flex gap-2 justify-end">
-    <twig:Link to="{{ path('thread_list') }}" :text="'navigation.items.threads'|trans(domain='layout')" />
+    <a href="{{ path('thread_list') }}">{{ "navigation.items.threads" | trans(domain="layout") }}</a>
     {% if isLoggedIn %}
-        <twig:Link to="{{ path('_logout_main') }}" :text="'navigation.items.logout'|trans(domain='layout')" />
+        <a href="{{ path('_logout_main') }}">{{ "navigation.items.logout" | trans(domain="layout") }}</a>
     {% else %}
-        <twig:Link to="{{ path('app_login') }}" :text="'navigation.items.login'|trans(domain='layout')" />
+        <a href="{{ path('app_login') }}">{{ "navigation.items.login" | trans(domain="layout") }}</a>
     {% endif %}
 </nav>
