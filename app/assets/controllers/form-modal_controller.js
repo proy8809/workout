@@ -11,6 +11,10 @@ export default class extends Controller {
         this.modalTarget.classList.add("hidden");
     }
 
+    triggerPageReload() {
+        window.location.reload();
+    }
+
     backdropClick(event) {
         if (event.target === this.modalTarget) {
             this.closeModal();

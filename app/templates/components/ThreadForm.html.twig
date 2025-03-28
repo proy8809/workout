@@ -17,7 +17,11 @@
         <button class="btn danger" type="button" data-action="form-modal#closeModal">
             {{ "actions.cancel" | trans(domain="general") }}
         </button>
-        <button class="btn primary" type="button" data-action="live#action form-modal#closeModal" data-live-action-param="saveThread">
+        <button class="btn primary"
+                type="button"
+                data-action="live#action"
+                data-live-action-param="saveThread"
+        >
             {{ "actions.save" | trans(domain="general") }}
         </button>
     </div>

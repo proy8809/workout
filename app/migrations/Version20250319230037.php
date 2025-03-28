@@ -28,6 +28,7 @@ final class Version20250319230037 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql("DELETE FROM thread_tags");
         $this->addSql("DELETE FROM tags");
     }
 }
